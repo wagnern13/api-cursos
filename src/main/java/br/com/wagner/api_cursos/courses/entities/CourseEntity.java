@@ -37,7 +37,8 @@ public class CourseEntity {
     private String category;           // Categoria do curso
 
     @Column(nullable = false)
-    private Boolean active;            //  Define se o curso está ativo ou não
+    @Builder.Default
+    private Boolean active = true;     //  Define se o curso está ativo ou não
 
     @CreationTimestamp
     private LocalDateTime created_at;  // Data de quando o curso foi criado
