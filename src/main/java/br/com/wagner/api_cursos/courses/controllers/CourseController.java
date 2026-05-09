@@ -1,5 +1,6 @@
 package br.com.wagner.api_cursos.courses.controllers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +22,8 @@ import br.com.wagner.api_cursos.courses.dtos.CreateCourseDTO;
 import br.com.wagner.api_cursos.courses.dtos.UpdateCourseDTO;
 import br.com.wagner.api_cursos.courses.dtos.UpdateCourseStatusDTO;
 import br.com.wagner.api_cursos.courses.services.CourseService;
+import br.com.wagner.api_cursos.responses.SuccessResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -35,36 +38,75 @@ public class CourseController {
     private final CourseService courseService;
 
     @PostMapping
-    public ResponseEntity<CourseResponseDTO> create(@RequestBody @Valid CreateCourseDTO body) {
+    public ResponseEntity<SuccessResponse<CourseResponseDTO>> create(
+        @RequestBody @Valid CreateCourseDTO body,
+        HttpServletRequest request) {
        
-        var response = courseService.create(body);
+        var dto = courseService.create(body);
+
+        var response = new SuccessResponse<>(
+            LocalDateTime.now(),
+            HttpStatus.CREATED.value(),
+            "Curso criado com sucesso",
+            request.getRequestURI(),
+            dto
+        );
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CourseResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid UpdateCourseDTO body) {
+    public ResponseEntity<SuccessResponse<CourseResponseDTO>> update(
+        @PathVariable UUID id, @RequestBody @Valid UpdateCourseDTO body,
+            HttpServletRequest request) {
+       
+        var dto = courseService.update(id, body);
         
-        var response = courseService.update(id, body);
+        var response = new SuccessResponse<>(
+            LocalDateTime.now(),
+            HttpStatus.CREATED.value(),
+            "Curso atualizado com sucesso",
+            request.getRequestURI(),
+            dto
+        );    
         
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}/active")
-    public ResponseEntity<CourseResponseDTO> updateStatus(
+    public ResponseEntity<SuccessResponse<CourseResponseDTO>> updateStatus(
         @PathVariable UUID id,
-        @RequestBody @Valid UpdateCourseStatusDTO body
-    ) {
-        var response = courseService.updateStatus(id, body);
+        @RequestBody @Valid UpdateCourseStatusDTO body,
+            HttpServletRequest request) {
+       
+        var dto = courseService.updateStatus(id, body);
+        
+        var response = new SuccessResponse<>(
+            LocalDateTime.now(),
+            HttpStatus.CREATED.value(),
+            "Status atualizado com sucesso",
+            request.getRequestURI(),
+            dto
+        );    
 
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable UUID id) {
+    public ResponseEntity<SuccessResponse<Void>> delete(
+        @PathVariable UUID id, 
+        HttpServletRequest request) {
         
         courseService.delete(id);
+
+        SuccessResponse<Void> response = new SuccessResponse<>(
+            LocalDateTime.now(), 
+            HttpStatus.OK.value(), 
+            "Exclusão efetuada com sucesso", 
+            request.getRequestURI(),
+            null
+        );
         
-        return ResponseEntity.ok("Exclusão efetuada com sucesso");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
