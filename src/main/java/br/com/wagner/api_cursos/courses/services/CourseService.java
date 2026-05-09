@@ -1,11 +1,13 @@
 package br.com.wagner.api_cursos.courses.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
 import br.com.wagner.api_cursos.courses.dtos.CourseResponseDTO;
 import br.com.wagner.api_cursos.courses.dtos.CreateCourseDTO;
+import br.com.wagner.api_cursos.courses.dtos.UpdateCourseDTO;
 import br.com.wagner.api_cursos.courses.entities.CourseEntity;
 import br.com.wagner.api_cursos.courses.repositories.CourseRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,19 @@ public class CourseService {
 
         var saved = courseRepository.save(course);    
         return CourseResponseDTO.fromEntity(saved);
+    }
+
+    public CourseResponseDTO update(UUID id, UpdateCourseDTO dto) {
+
+        var course = courseRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Curso não encontrado"));
+        
+        course.setName(dto.name());
+        course.setCategory(dto.category());
+
+        var updated = courseRepository.save(course);
+
+        return CourseResponseDTO.fromEntity(updated);
     }
 
     public List<CourseResponseDTO> findAll() {

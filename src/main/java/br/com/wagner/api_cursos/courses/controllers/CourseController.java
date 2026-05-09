@@ -1,6 +1,7 @@
 package br.com.wagner.api_cursos.courses.controllers;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.wagner.api_cursos.courses.dtos.CourseResponseDTO;
 import br.com.wagner.api_cursos.courses.dtos.CreateCourseDTO;
+import br.com.wagner.api_cursos.courses.dtos.UpdateCourseDTO;
 import br.com.wagner.api_cursos.courses.services.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 
@@ -46,6 +51,14 @@ public class CourseController {
         @RequestParam(required = false) String category) {
 
         var response = courseService.search(name, category);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CourseResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid UpdateCourseDTO body) {
+        
+        var response = courseService.update(id, body);
+        
         return ResponseEntity.ok(response);
     }
 }
