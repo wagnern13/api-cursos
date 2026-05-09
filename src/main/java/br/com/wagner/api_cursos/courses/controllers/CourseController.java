@@ -110,18 +110,47 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CourseResponseDTO>> list() {
+    public ResponseEntity<SuccessResponse<List<CourseResponseDTO>>> list(
+        HttpServletRequest request
+    ) {
         
-        var response = courseService.findAll();
+        var result = courseService.findAll();
+
+        String message = result.isEmpty()
+            ? "Nenhum dado encontrado"
+            : "Consulta efetuada com sucesso";
+
+        var response = new SuccessResponse<>(
+            LocalDateTime.now(),
+            HttpStatus.OK.value(),
+            message,
+            request.getRequestURI(),
+            result
+        );
+
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<CourseResponseDTO>> search(
+    public ResponseEntity<SuccessResponse<List<CourseResponseDTO>>> search(
         @RequestParam(required = false) String name,
-        @RequestParam(required = false) String category) {
+        @RequestParam(required = false) String category,
+        HttpServletRequest request
+    ) {
 
-        var response = courseService.search(name, category);
+        var result = courseService.search(name, category);
+
+        String message = result.isEmpty()
+            ? "Nenhum dado encontrado"
+            : "Consulta efetuada com sucesso";
+
+        var response = new SuccessResponse<>(
+            LocalDateTime.now(),
+            HttpStatus.OK.value(),
+            message,
+            request.getRequestURI(),
+            result
+        );
         return ResponseEntity.ok(response);
     }
 }
