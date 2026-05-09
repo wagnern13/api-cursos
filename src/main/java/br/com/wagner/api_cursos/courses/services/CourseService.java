@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import br.com.wagner.api_cursos.courses.dtos.CourseResponseDTO;
 import br.com.wagner.api_cursos.courses.dtos.CreateCourseDTO;
 import br.com.wagner.api_cursos.courses.dtos.UpdateCourseDTO;
+import br.com.wagner.api_cursos.courses.dtos.UpdateCourseStatusDTO;
 import br.com.wagner.api_cursos.courses.entities.CourseEntity;
 import br.com.wagner.api_cursos.courses.repositories.CourseRepository;
+import br.com.wagner.api_cursos.exceptions.CourseNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -33,7 +35,7 @@ public class CourseService {
     public CourseResponseDTO update(UUID id, UpdateCourseDTO dto) {
 
         var course = courseRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Curso não encontrado"));
+            .orElseThrow(() -> new CourseNotFoundException("Curso não encontrado"));
         
         course.setName(dto.name());
         course.setCategory(dto.category());
@@ -43,10 +45,22 @@ public class CourseService {
         return CourseResponseDTO.fromEntity(updated);
     }
 
+    public CourseResponseDTO updateStatus(UUID id, UpdateCourseStatusDTO dto) {
+
+        var course = courseRepository.findById(id)
+            .orElseThrow(() -> new CourseNotFoundException("Curso não encontrado"));
+
+        course.setActive(dto.active());
+
+        var update = courseRepository.save(course);
+
+        return CourseResponseDTO.fromEntity(update);
+    }
+
     public void delete(UUID id) {
 
         var course = courseRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Curso não encontrado"));
+            .orElseThrow(() -> new CourseNotFoundException("Curso não encontrado"));
         
         courseRepository.delete(course);
 
