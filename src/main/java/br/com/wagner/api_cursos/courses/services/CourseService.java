@@ -35,4 +35,23 @@ public class CourseService {
             .map(CourseResponseDTO::fromEntity)
             .toList();
     }
+
+    public List<CourseResponseDTO> search(String name, String category) {
+
+        List<CourseEntity> result;
+
+        if (name != null && category != null) {
+            result = courseRepository.findByNameContainingIgnoreCaseAndCategoryContainingIgnoreCase(name, category);
+        } else if (name != null) {
+            result = courseRepository.findByNameContainingIgnoreCase(name);
+        } else if (category != null) {
+            result = courseRepository.findByCategoryContainingIgnoreCase(category);
+        } else {
+            result = courseRepository.findAll();
+        }
+
+        return result.stream()
+            .map(CourseResponseDTO::fromEntity)
+            .toList();
+    }
  }

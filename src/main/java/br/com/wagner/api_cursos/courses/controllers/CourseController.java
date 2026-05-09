@@ -15,6 +15,8 @@ import br.com.wagner.api_cursos.courses.dtos.CreateCourseDTO;
 import br.com.wagner.api_cursos.courses.services.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -37,5 +39,13 @@ public class CourseController {
         var response = courseService.findAll();
         return ResponseEntity.ok(response);
     }
-    
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CourseResponseDTO>> search(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) String category) {
+
+        var response = courseService.search(name, category);
+        return ResponseEntity.ok(response);
+    }
 }
