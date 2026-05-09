@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +39,22 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<CourseResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid UpdateCourseDTO body) {
+        
+        var response = courseService.update(id, body);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable UUID id) {
+        
+        courseService.delete(id);
+        
+        return ResponseEntity.ok("Exclusão efetuada com sucesso");
+    }
+
     @GetMapping
     public ResponseEntity<List<CourseResponseDTO>> list() {
         
@@ -51,14 +68,6 @@ public class CourseController {
         @RequestParam(required = false) String category) {
 
         var response = courseService.search(name, category);
-        return ResponseEntity.ok(response);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<CourseResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid UpdateCourseDTO body) {
-        
-        var response = courseService.update(id, body);
-        
         return ResponseEntity.ok(response);
     }
 }

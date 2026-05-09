@@ -43,6 +43,15 @@ public class CourseService {
         return CourseResponseDTO.fromEntity(updated);
     }
 
+    public void delete(UUID id) {
+
+        var course = courseRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Curso não encontrado"));
+        
+        courseRepository.delete(course);
+
+    }
+
     public List<CourseResponseDTO> findAll() {
         
         return courseRepository.findAll()
